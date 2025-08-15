@@ -1,0 +1,22 @@
+cmake_minimum_required(VERSION 3.16)
+project(MedMetaExtractor VERSION 1.0.0 LANGUAGES CXX)
+
+# Set C++17 standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Create the executable with simple main (no external dependencies)
+add_executable(medmeta src/simple_main.cpp)
+
+# Set output directory
+set_target_properties(medmeta PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+)
+
+# Compiler-specific options
+if(MSVC)
+    target_compile_options(medmeta PRIVATE /W4)
+else()
+    target_compile_options(medmeta PRIVATE -Wall -Wextra -Wpedantic)
+endif()
