@@ -1,0 +1,5 @@
+{
+  "output_format": "csv",
+  "fields": ["PatientID", "StudyDate", "Modality", "StudyDescription"],
+  "anonymize": true
+}
