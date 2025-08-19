@@ -1,0 +1,15 @@
+{
+  "output_format": "csv",
+  "fields": [
+    "PatientID",
+    "PatientName",
+    "StudyDate",
+    "StudyTime",
+    "Modality",
+    "StudyDescription",
+    "AccessionNumber",
+    "ReferringPhysicianName",
+    "InstitutionName"
+  ],
+  "anonymize": false
+}

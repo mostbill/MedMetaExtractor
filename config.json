@@ -1,5 +1,6 @@
 {
-  "output_format": "csv",
+  "output_format": "json",
+  "output_file": "test_output.json",
   "fields": ["PatientID", "StudyDate", "Modality", "StudyDescription"],
   "anonymize": true
 }

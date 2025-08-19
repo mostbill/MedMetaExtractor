@@ -1,4 +1,5 @@
 #include "ConfigParser.hpp"
+#include "Logger.hpp"
 #include <fstream>
 #include <iostream>
 
@@ -18,12 +19,15 @@ bool ConfigParser::getAnonymize() const {
     return anonymize_;
 }
 
+std::string ConfigParser::getOutputFile() const {
+    return outputFile_;
+}
+
 void ConfigParser::loadConfig(const std::string& configFilePath) {
     try {
         std::ifstream configFile(configFilePath);
         if (!configFile.is_open()) {
-            std::cerr << "Warning: Could not open config file '" << configFilePath 
-                      << "'. Using default values." << std::endl;
+            Logger::warn("Could not open config file '" + configFilePath + "'. Using default values.");
             return;
         }
         
@@ -36,8 +40,7 @@ void ConfigParser::loadConfig(const std::string& configFilePath) {
             if (format == "csv" || format == "json") {
                 outputFormat_ = format;
             } else {
-                std::cerr << "Warning: Invalid output_format '" << format 
-                          << "'. Using default 'csv'." << std::endl;
+                Logger::warn("Invalid output_format '" + format + "'. Using default 'csv'.");
             }
         }
         
@@ -56,11 +59,14 @@ void ConfigParser::loadConfig(const std::string& configFilePath) {
             anonymize_ = config["anonymize"];
         }
         
+        // Parse output_file string (optional)
+        if (config.contains("output_file") && config["output_file"].is_string()) {
+            outputFile_ = config["output_file"];
+        }
+        
     } catch (const nlohmann::json::exception& e) {
-        std::cerr << "Warning: JSON parsing error in config file '" << configFilePath 
-                  << "': " << e.what() << ". Using default values." << std::endl;
+        Logger::warn("JSON parsing error in config file '" + configFilePath + "': " + e.what() + ". Using default values.");
     } catch (const std::exception& e) {
-        std::cerr << "Warning: Error reading config file '" << configFilePath 
-                  << "': " << e.what() << ". Using default values." << std::endl;
+        Logger::warn("Error reading config file '" + configFilePath + "': " + e.what() + ". Using default values.");
     }
 }

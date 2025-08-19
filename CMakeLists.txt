@@ -24,17 +24,38 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(nlohmann_json)
 
-# Optional: DCMTK support (uncomment when needed)
-# find_package(DCMTK QUIET)
-# if(DCMTK_FOUND)
-#     add_definitions(-DHAVE_DCMTK)
-#     include_directories(${DCMTK_INCLUDE_DIRS})
-# endif()
+# DCMTK support
+find_package(DCMTK QUIET)
+set(DCMTK_USABLE FALSE)
+if(DCMTK_FOUND)
+    # Test if DCMTK libraries are actually linkable
+    try_compile(DCMTK_LINKABLE
+        ${CMAKE_BINARY_DIR}/dcmtk_test
+        ${CMAKE_SOURCE_DIR}/cmake/test_dcmtk.cpp
+        LINK_LIBRARIES ${DCMTK_LIBRARIES}
+        OUTPUT_VARIABLE DCMTK_TEST_OUTPUT
+    )
+    
+    if(DCMTK_LINKABLE)
+        set(DCMTK_USABLE TRUE)
+        add_definitions(-DDCMTK_AVAILABLE)
+        include_directories(${DCMTK_INCLUDE_DIRS})
+        message(STATUS "DCMTK found and usable: ${DCMTK_LIBRARIES}")
+    else()
+        message(STATUS "DCMTK found but not linkable with current compiler. DICOM functionality will be limited.")
+        message(STATUS "DCMTK test output: ${DCMTK_TEST_OUTPUT}")
+    endif()
+else()
+    message(STATUS "DCMTK not found. DICOM functionality will be limited.")
+endif()
 
 # Add executable
 add_executable(medmeta 
     src/main.cpp
     src/ConfigParser.cpp
+    src/DicomReader.cpp
+    src/OutputFormatter.cpp
+    src/Logger.cpp
 )
 
 # Link libraries
@@ -46,6 +67,11 @@ if(fmt_FOUND)
     target_compile_definitions(medmeta PRIVATE HAVE_FMT)
 else()
     message(STATUS "fmt library not found. Install with: vcpkg install fmt or apt-get install libfmt-dev")
+endif()
+
+# Link DCMTK if found and usable
+if(DCMTK_USABLE)
+    target_link_libraries(medmeta PRIVATE ${DCMTK_LIBRARIES})
 endif()
 
 # Optional: Link DCMTK when available

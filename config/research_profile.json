@@ -1,0 +1,17 @@
+{
+  "output_format": "json",
+  "output_file": "research_results.json",
+  "fields": [
+    "PatientID",
+    "StudyDate",
+    "StudyTime",
+    "Modality",
+    "StudyDescription",
+    "SeriesDescription",
+    "InstitutionName",
+    "ManufacturerModelName",
+    "SliceThickness",
+    "PixelSpacing"
+  ],
+  "anonymize": true
+}
